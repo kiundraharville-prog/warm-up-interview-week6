@@ -1,22 +1,21 @@
-const supabaseUrl = "https://aenyreivppdnxzmgoclo.supabase.co";
-const supabaseKey = "sb_publishable_VWRMIZxkReey80S_WtMCNA_1loUGnQ8";
+import dotenv from "dotenv";
+dotenv.config()
 
-const client = supabase.createClient(
-  supabaseUrl,
-  supabaseKey
-);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
 
-function getPets() {
-  client
-    .from("pets")
-    .select("Name, Age")
-    .then(({ data, error }) => {
-      console.log("DATA:", data);
-      console.log("ERROR:", error);
-
-      if (error) return;
-
-      document.getElementById("pets").innerHTML =
-        data.map(p => `<li>${p.name} (${p.age})</li>`).join("");
+async function fetchPets() {
+    const response = await fetch(`${supabaseUrl}/rest/v1/pets`, {
+        headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`
+        }
     });
+
+    const data = await response.json();
+
+    console.log('pets data:');
+    console.table(data);
 }
+
+fetchPets();
